@@ -15,7 +15,7 @@ function TopBar(props) {
         </Typography>
 
         <Box sx={{ flexGrow: 1 }} />
-
+    
         {props.context && (
           <Typography variant="h5" color="inherit">
             {props.context}

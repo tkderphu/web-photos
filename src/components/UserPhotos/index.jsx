@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography , Box, CardContent, Card, CardMedia, Divider, List, ListItem, ListItemText} from "@mui/material";
 
 import "./styles.css";
 import { Link, useParams } from "react-router-dom";
 import models from "../../modelData/models";
+import fetchModel from "../../lib/fetchModelData";
 const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
 /**
@@ -11,10 +12,22 @@ const formatDate = (dateString) => new Date(dateString).toLocaleString();
  */
 function UserPhotos(props) {
   const user = useParams();
-  const userPhotos = models.photoOfUserModel(user.userId)
-  const userModel = models.userModel(user.userId)
+  const [userPhotos, setUserPhotos] = useState([])
+  const [userModel, setUserModel] = useState()
+ 
   useEffect(() => {
-    props.fn("Photos of " + userModel.first_name + " " + userModel.last_name)
+    fetchModel(`http://localhost:8081/api/user/${user.userId}`).then(res => {
+      setUserModel(res.data)
+    })
+    fetchModel(`http://localhost:8081/api/photo/photosOfUser/${user.userId}`).then(res => {
+      setUserPhotos(res.data)
+    })
+  }, [])
+ 
+  useEffect(() => {
+    if(userModel) {
+      props.fn("Photos of " + userModel.first_name + " " + userModel.last_name)
+    }
   }, [user.userId])
 
   return (
